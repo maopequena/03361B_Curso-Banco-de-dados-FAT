@@ -32,8 +32,8 @@ CREATE TABLE Comentario (
     id_aluno INT NOT NULL,
     id_professor INT NOT NULL,
     notadoprofessor DECIMAL (3, 1),
-    CONSTRAINT fk_IdAluno FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno),
-    CONSTRAINT fk_IdProfessor FOREIGN KEY (id_professor) REFERENCES Professor(id_professor)
+    CONSTRAINT fk_id_aluno FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno),
+    CONSTRAINT fk_id_professor FOREIGN KEY (id_professor) REFERENCES Professor(id_professor)
 );
 
 -- 4. Inserir os dados conforme o cenário proposto
@@ -53,13 +53,18 @@ INSERT INTO Professor (nome_professor, curso) VALUES
     ('Marina', 'Matemática'),
     ('Anne', 'Inglês');
     
-INSERT INTO Comentario (comentario, notadoprofessor) VALUES
-	('Precisa melhorar em álgebra', 6.5),
-    ('Precisa melhorar em trigonometria', 7.0),
-    ('Parabéns por ter estudado tanto', 10.0),
-    ('Revise a estrutura das células', 8.0),
-    ('Quase lá', 8.5),
-    ('Needs to work on verbs', 7.0),
-    ('Great work', 9.0),
-    ('Revise tudo!', 5.5),
-    ('Precisa melhorar em cálculo', 7.0);
+SELECT * FROM Aluno;
+SELECT * FROM Professor;
+
+INSERT INTO Comentario (comentario, id_aluno, id_professor, notadoprofessor) VALUES
+	('Precisa melhorar em álgebra', 1, 2, 6.5),
+    ('Precisa melhorar em trigonometria', 2, 2, 7.0),
+    ('Parabéns por ter estudado tanto', 3, 1, 10.0),
+    ('Revise a estrutura das células', 4, 1, 8.0),
+    ('Quase lá', 5, 2, 8.5),
+    ('Needs to work on verbs', 6, 3, 7.0),
+    ('Great work', 7, 3, 9.0),
+    ('Revise tudo!', 8, 1, 5.5),
+    ('Precisa melhorar em cálculo', 9, 2, 7.0);
+    
+SELECT id_aluno FROM Comentario WHERE notadoprofessor >= 6;
