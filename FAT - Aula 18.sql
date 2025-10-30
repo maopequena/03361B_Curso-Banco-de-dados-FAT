@@ -313,3 +313,84 @@ JOIN Nivel_Cargo_Aula18 as nc
   ON c.salario
   BETWEEN nc.sal_min AND nc.sal_max
   WHERE nc.nivel = 'Pleno' AND f.id_departamento = 3;
+
+-- DESAFIO AULA 18
+-- Passo 1: Crie e selecione seu banco de dados
+
+USE FAT_QualificaSP;
+
+-- Passo 2: Crie as tabelas
+-- Departamentos:
+
+CREATE TABLE Departamentos_Desafio_Aula18 (
+  id_depto INT PRIMARY KEY,
+  nome_depto VARCHAR(50)
+);
+
+-- Niveis_Salariais:
+
+CREATE TABLE Niveis_Salariais_Desafio_Aula18 (
+  nivel VARCHAR(20) PRIMARY KEY,
+  salario_min DECIMAL(10, 2),
+  salario_max DECIMAL(10, 2)
+);
+
+-- Funcionarios:
+CREATE TABLE Funcionarios_Desafio_Aula18 (
+  id_func INT PRIMARY KEY,
+  nome VARCHAR(100),
+  salario DECIMAL(10, 2),
+  id_depto INT
+);
+
+-- Passo 3: Insira os dados iniciais
+
+INSERT INTO Departamentos_Desafio_Aula18 VALUES
+  (1, 'Vendas'),
+  (2, 'TI'),
+  (3, 'Inovação');
+
+INSERT INTO Niveis_Salariais_Desafio_Aula18 VALUES
+  ('Junior', 3000, 5000),
+  ('Pleno', 5001, 9000),
+  ('Senior', 9001, 15000);
+
+INSERT INTO Funcionarios_Desafio_Aula18 VALUES
+  (1, 'Ana', 4500, 1),
+  (2, 'Beto', 8200, 1),
+  (3, 'Clara', 12500, 2);
+
+-- Desafio 1: Mapeamento de departamentos (RIGHT JOIN)
+-- Problema: Listar TODOS os departamentos e quem trabalha em cada um, inclusive os departamentos vazios.
+SELECT
+  d.nome_depto Departamento,
+  f.nome "Funcionário"
+FROM Funcionarios_Desafio_Aula18 as f
+RIGHT JOIN Departamentos_Desafio_Aula18 as d
+  ON f.id_depto = d.id_depto;
+
+-- Desafio 2: Classificação de salários (BETWEEN JOIN)
+-- Problema: Mostrar o nome de cada funcionário e o seu nível salarial (Junior, Pleno ou Senior).
+SELECT
+  f.nome "Funcionário",
+  ns.nivel "Nível salarial"
+FROM Funcionarios_Desafio_Aula18 as f
+INNER JOIN Niveis_Salariais_Desafio_Aula18 as ns
+  ON f.salario
+  BETWEEN ns.salario_min AND ns.salario_max;
+
+-- Desafio 3: Consulta específica (múltiplos JOINs + WHERE)
+-- Problema: Listar o nome dos funcionários do nível 'Pleno' que trabalham no departamento de 'Vendas'.
+SELECT
+  f.nome "Funcionário",
+  ns.nivel "Nível salarial",
+  d.nome_depto Departamento
+FROM Funcionarios_Desafio_Aula18 as f
+JOIN Departamentos_Desafio_Aula18 as d
+  ON f.id_depto = d.id_depto
+JOIN Niveis_Salariais_Desafio_Aula18 as ns
+  ON f.salario
+  BETWEEN ns.salario_min AND ns.salario_max
+WHERE
+  ns.nivel = 'Pleno' AND
+  d.nome_depto = 'Vendas';
