@@ -293,6 +293,7 @@ JOIN Cliente_Aula22_Lanhouse as cal
 JOIN Computador_Aula22_Lanhouse as comp
   ON sal.id_computador = comp.id
 WHERE sal.data_fim IS NULL;
+-- CORRETO
 
 -- BÔNUS: SOMENTE SESSÕES FINALIZADAS:
 SELECT
@@ -306,6 +307,7 @@ JOIN Cliente_Aula22_Lanhouse as cal
 JOIN Computador_Aula22_Lanhouse as comp
   ON sal.id_computador = comp.id
 WHERE sal.data_fim IS NOT NULL;
+-- CORRETO
 
 -- ATIVIDADE 2: LISTAR TODAS AS SESSÕES FINALIZADAS E QUANTAS HORAS CADA SESSÃO DUROU
 -- id da sessão, nome e email do usuário, identificador do computador e horas usadas
@@ -332,13 +334,13 @@ SELECT
   cal.nome Nome,
   cal.email Email,
   comp.identificacao Computador,
-  FORMAT((DATEDIFF(hour, sal.data_inicio, sal.data_fim) * comp.valor), 'C', 'pt-BR') AS "Valor devido"
+  FORMAT((DATEDIFF(hour, sal.data_inicio, CURRENT_TIMESTAMP) * comp.valor), 'C', 'pt-BR') AS "Valor devido"
 FROM Sessao_Aula22_Lanhouse as sal
 JOIN Cliente_Aula22_Lanhouse as cal
   ON sal.id_cliente = cal.id
 JOIN Computador_Aula22_Lanhouse as comp
   ON sal.id_computador = comp.id
-WHERE sal.data_fim IS NOT NULL;
+WHERE sal.data_fim IS NULL;
 
 -- BÔNUS: VIEW COM TODAS AS INFORMAÇÕES:
 CREATE VIEW [Lanhouse] AS
@@ -347,6 +349,8 @@ SELECT
   cal.nome Nome,
   cal.email Email,
   comp.identificacao Computador,
+  sal.data_inicio "Início",
+  sal.data_fim "Fim",
   DATEDIFF(hour, sal.data_inicio, sal.data_fim) AS "Horas em uso",
   FORMAT((DATEDIFF(hour, sal.data_inicio, sal.data_fim) * comp.valor), 'C', 'pt-BR') AS "Valor devido"
 FROM Sessao_Aula22_Lanhouse as sal
@@ -356,3 +360,62 @@ JOIN Computador_Aula22_Lanhouse as comp
   ON sal.id_computador = comp.id;
 
 SELECT * FROM [Lanhouse];
+
+----------------------------------------------------
+
+-- Exercício proposto no PPT:
+-- Você é responsável por gerar relatórios para uma padaria.
+-- A gerência pediu um novo relatório de produtos,
+-- mas com algumas regras de formatação específicas
+-- para padronizar a visualização dos dados.
+
+-- Crie o banco de dados FAT_QualificaSP:
+USE FAT_QualificaSP;
+
+-- Crie a tabela de produtos da padaria:
+CREATE TABLE ProdutosPadaria_Aula22 (
+  nome VARCHAR(100),
+  preco DECIMAL(10, 2)
+);
+
+-- Insira os dados dos produtos:
+INSERT INTO ProdutosPadaria_Aula22 (nome, preco) VALUES
+  ('pão francês', 0.50),
+  ('Bolo de Chocolate', 25.75),
+  ('croissant', 4.20),
+  ('Sonho de Creme', 5.00);
+
+-- Crie um único comando SELECT que retorne um relatório com as seguintes colunas,
+-- a partir da tabela ProdutosPadaria_Aula22:
+
+-- Nome_Produto_Maiusculo: o nome do produto, totalmente em letras maiúsculas.
+-- Nome_Produto_Minusculo: o nome do produto, totalmente em letras minúsculas.
+-- Tamanho_Nome: a quantidade de caracteres no nome de cada produto.
+-- Sigla_Produto: os 3 primeiros caracteres do nome do produto.
+-- Preco_Arredondado: o preço do produto, arredondado para o número inteiro mais próximo.
+-- Data_Consulta: uma coluna que mostre a data e hora exatas em que o relatório foi gerado.
+
+SELECT
+  UPPER(nome) Nome_Produto_Maiusculo,
+  LOWER(nome) Nome_Produto_Minusculo,
+  LEN(nome) Tamanho_Nome,
+  LOWER(SUBSTRING(nome, 1, 3)) Sigla_Produto,
+  ROUND(preco, 0) Preco_Arredondado,
+  GETDATE() Data_Consulta
+FROM ProdutosPadaria_Aula22;
+
+-- A gerência da padaria pediu um novo relatório de produtos,
+-- com uma formatação específica, para ser usado na criação de etiquetas.
+-- Você deve criar uma única consulta SELECT que retorne as seguintes colunas a partir da tabela ProdutosPadaria:
+
+-- 1. Nome_Padronizado: o nome do produto, totalmente em letras maiúsculas.
+-- 2. Tamanho_Nome: a quantidade total de caracteres no nome de cada produto.
+-- 3. Preco_Arredondado: o preço do produto, arredondado para o número inteiro mais próximo (sem centavos).
+-- 4. Data_Emissao: uma coluna que mostre a data e hora exatas em que o relatório foi gerado.
+
+SELECT
+  UPPER(nome) Nome_Padronizado,
+  LEN(nome) Tamanho_Nome,
+  FORMAT(ROUND(preco, 0), 'C', 'pt-BR') Preco_Arredondado,
+  GETDATE() Data_Emissao
+FROM ProdutosPadaria_Aula22;
