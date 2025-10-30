@@ -183,3 +183,30 @@ SELECT
   CURRENT_TIMESTAMP AS "Carimbo de data e hora",
   GETDATE() AS "Função GETDATE"
 FROM Aula21_ProdutoPadaria as app;
+
+-- DESAFIO AULA 21
+-- Imagine que você precisa criar um relatório diário de preços para uma loja online.
+-- Você tem uma tabela chamada Produtos:
+
+CREATE TABLE Produtos_Desafio_Aula21 (
+  id INT PRIMARY KEY IDENTITY,
+  nome VARCHAR(100),
+  preco DECIMAL(10, 2)
+);
+
+INSERT INTO Produtos_Desafio_Aula21 (nome, preco) VALUES
+  ('caneta azul', 1.99),
+  ('caderno universitário', 24.50),
+  ('mochila reforçada', 149.90);
+
+-- Seu gerente pediu um relatório com as seguintes regras de formatação, sem alterar os dados originais da tabela:
+-- 1. O nome do produto deve ser exibido totalmente em **LETRAS MAIÚSCULAS**.
+-- 2. O preço de cada produto deve ser arredondado para o número inteiro mais próximo (sem os centavos).
+-- 3. O relatório deve incluir uma coluna extra, chamada "Data do relatório", que mostre a data e hora exatas em que a consulta foi executada.
+-- Pergunta: qual seria o comando SELECT que você usaria para gerar este relatório a partir da tabela Produtos?
+
+SELECT
+  UPPER(p.nome),
+  FORMAT(ROUND(p.preco, 0), 'C', 'pt-BR'),
+  GETDATE() "Data do relatório"
+FROM Produtos_Desafio_Aula21 as p;
